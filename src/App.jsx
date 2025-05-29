@@ -37,6 +37,10 @@ function KanbanTodoApp() {
     task: null,
     column: '',
   });
+  const [isDarkMode, setIsDarkMode] = useState(() =>
+    localStorage.getItem('theme') === 'dark'
+  );
+
 
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
@@ -50,6 +54,17 @@ function KanbanTodoApp() {
     window.addEventListener('click', hideMenu);
     return () => window.removeEventListener('click', hideMenu);
   }, []);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
+
 
   const handleDragStart = (event) => {
     const task = event.active.data.current.task;
@@ -118,21 +133,34 @@ function KanbanTodoApp() {
   }
 
   return (
-    <section className="p-4 lg:p-8 bg-white min-h-screen font-sans">
-      <h1 className="text-3xl font-extrabold mb-6 flex items-center gap-3">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-        </svg>
-        To Do List App</h1>
-      <button
-        onClick={() => {
-          localStorage.removeItem('kanbanTasks');
-          setTasks(initialState);
-        }}
-        className="text-sm text-red-500 underline mb-2"
-      >
-        Clear All Tasks
-      </button>
+    <section className="p-4 lg:p-8 bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
+      <header className='flex items-center justify-between'>
+        <h1 className="text-3xl font-extrabold mb-6 flex items-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+          </svg>
+          To Do List App</h1>
+        <button
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          className="mb-4 px-4 py-2 text-sm border rounded"
+        >
+          {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+
+      </header>
+      {Object.values(tasks).flat().length > 1 && (
+        <button
+          onClick={() => {
+            localStorage.removeItem('kanbanTasks');
+            setTasks(initialState);
+          }}
+          className="text-sm text-red-500 underline mb-2"
+        >
+          Clear All Tasks
+        </button>
+      )}
+
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

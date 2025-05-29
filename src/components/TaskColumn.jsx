@@ -8,8 +8,8 @@ function TaskColumn({ column, tasks, setContextMenu, openModal }) {
   });
 
   return (
-    <div ref={setNodeRef} className="bg-gray-100 rounded-lg p-4 shadow-md relative">
-      <h2 className="text-lg font-semibold mb-3">{column}</h2>
+    <div ref={setNodeRef} className="bg-gray-100 rounded-lg p-4 shadow-md relative dark:bg-gray-800">
+      <h2 className="text-lg font-semibold mb-3 dark:text-gray-200">{column}</h2>
 
       <SortableContext
         items={tasks.map((task) => task.id)}
