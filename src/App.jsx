@@ -111,7 +111,7 @@ function KanbanTodoApp() {
   }
 
   return (
-    <div className="p-4 lg:p-8 bg-white min-h-screen font-sans">
+    <section className="p-4 lg:p-8 bg-white min-h-screen font-sans">
       <h1 className="text-3xl font-extrabold mb-6">To Do List App</h1>
 
       <DndContext
@@ -154,7 +154,7 @@ function KanbanTodoApp() {
         />
       )}
 
-    </div>
+    </section>
   );
 }
 

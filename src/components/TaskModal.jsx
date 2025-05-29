@@ -1,17 +1,21 @@
 import Modal from 'react-modal';
 
+Modal.setAppElement('#root');
+
 const customStyles = {
-    content: {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '90vw',
-        maxWidth: '400px',
-        padding: '1rem',
-    },
+   content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    width: '90vw',        
+    maxWidth: '400px',    
+    padding: '1.5rem',      
+  },
 };
 
-Modal.setAppElement('#root');
 
 function TaskModal({ isOpen, closeModal, title, setTitle, description, setDescription, addTask }) {
     return (
@@ -20,7 +24,7 @@ function TaskModal({ isOpen, closeModal, title, setTitle, description, setDescri
                 <h2 className="text-lg font-bold text-green-700">Create New Task</h2>
                 <button onClick={closeModal} className="text-gray-500 hover:text-black">X</button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-3">
                 <input
                     className="w-full border border-gray-300 rounded px-2 py-1"
                     placeholder="Title"

@@ -4,7 +4,7 @@ import TaskCard from './TaskCard';
 
 function TaskColumn({ column, tasks, setContextMenu, openModal }) {
   const { setNodeRef } = useDroppable({
-    id: column, // Important: unique ID for droppable area
+    id: column, // unique ID for droppable area
   });
 
   return (
