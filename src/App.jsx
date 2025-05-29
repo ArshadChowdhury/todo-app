@@ -22,7 +22,10 @@ const initialState = {
 };
 
 function KanbanTodoApp() {
-  const [tasks, setTasks] = useState(initialState);
+  const [tasks, setTasks] = useState(() => {
+    const stored = localStorage.getItem('kanbanTasks');
+    return stored ? JSON.parse(stored) : initialState;
+  });
   const [modalIsOpen, setIsOpen] = useState(false);
   const [activeTask, setActiveTask] = useState(null);
   const [title, setTitle] = useState('');
@@ -37,6 +40,10 @@ function KanbanTodoApp() {
 
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  useEffect(() => {
+    localStorage.setItem('kanbanTasks', JSON.stringify(tasks));
+  }, [tasks]);
 
   useEffect(() => {
     const hideMenu = () => setContextMenu((prev) => ({ ...prev, visible: false }));
@@ -112,15 +119,27 @@ function KanbanTodoApp() {
 
   return (
     <section className="p-4 lg:p-8 bg-white min-h-screen font-sans">
-      <h1 className="text-3xl font-extrabold mb-6">To Do List App</h1>
-
+      <h1 className="text-3xl font-extrabold mb-6 flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+        </svg>
+        To Do List App</h1>
+      <button
+        onClick={() => {
+          localStorage.removeItem('kanbanTasks');
+          setTasks(initialState);
+        }}
+        className="text-sm text-red-500 underline mb-2"
+      >
+        Clear All Tasks
+      </button>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {Object.keys(COLUMN_TYPES).map((key) => {
             const column = COLUMN_TYPES[key];
             return (

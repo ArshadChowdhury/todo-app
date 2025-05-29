@@ -3,17 +3,18 @@ import Modal from 'react-modal';
 Modal.setAppElement('#root');
 
 const customStyles = {
-   content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    width: '90vw',        
-    maxWidth: '400px',    
-    padding: '1.5rem',      
-  },
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        width: '90vw',
+        maxWidth: '400px',
+        padding: '1.5rem',
+        borderRadius: '8px',
+    },
 };
 
 
@@ -22,7 +23,11 @@ function TaskModal({ isOpen, closeModal, title, setTitle, description, setDescri
         <Modal isOpen={isOpen} onRequestClose={closeModal} style={customStyles} contentLabel="New Task Modal">
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-bold text-green-700">Create New Task</h2>
-                <button onClick={closeModal} className="text-gray-500 hover:text-black">X</button>
+                <button onClick={closeModal} className="text-gray-500 hover:text-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
             <div className="space-y-3">
                 <input
