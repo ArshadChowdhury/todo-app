@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import Modal from 'react-modal';
 import {
   DndContext,
   closestCorners,
@@ -10,10 +9,11 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 
-import { COLUMN_TYPES, STATUS_COLORS } from './assets/constants';
+import { COLUMN_TYPES } from './assets/constants';
 import TaskColumn from './components/TaskColumn';
 import TaskModal from './components/TaskModal';
 import ContextMenu from './components/ContextMenu';
+
 
 const initialState = {
   [COLUMN_TYPES.NEW]: [],
@@ -24,7 +24,7 @@ const initialState = {
 function KanbanTodoApp() {
   const [tasks, setTasks] = useState(initialState);
   const [modalIsOpen, setIsOpen] = useState(false);
-    const [activeTask, setActiveTask] = useState(null);
+  const [activeTask, setActiveTask] = useState(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [contextMenu, setContextMenu] = useState({
@@ -34,7 +34,7 @@ function KanbanTodoApp() {
     task: null,
     column: '',
   });
- 
+
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
@@ -45,37 +45,36 @@ function KanbanTodoApp() {
   }, []);
 
   const handleDragStart = (event) => {
-  setActiveTask(event.active.data.current.task);
-};
+    const task = event.active.data.current.task;
+    setActiveTask(task);
+  };
 
 
   const handleDragEnd = (event) => {
-  const { active, over } = event;
-  if (!over || active.id === over.id) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      setActiveTask(null);
+      return;
+    }
+
+    const fromColumn = active.data.current.column;
+    let toColumn = over.id;
+
+    // If over.id is not a column, find which column the task is in
+    if (!Object.values(COLUMN_TYPES).includes(toColumn)) {
+      toColumn = Object.keys(tasks).find((col) =>
+        tasks[col].some((task) => task.id === over.id)
+      );
+    }
+
+    if (fromColumn && toColumn && fromColumn !== toColumn) {
+      moveTask(activeTask, fromColumn, toColumn);
+    }
+
     setActiveTask(null);
-    return;
-  }
+  };
 
-  const fromColumn = active.data.current.column;
-  const toColumn = over.data.current.column;
-
-  if (fromColumn === toColumn) {
-    const updatedTasks = [...tasks[fromColumn]];
-    const oldIndex = updatedTasks.findIndex((t) => t.id === active.id);
-    const newIndex = updatedTasks.findIndex((t) => t.id === over.id);
-    const [movedTask] = updatedTasks.splice(oldIndex, 1);
-    updatedTasks.splice(newIndex, 0, movedTask);
-
-    setTasks({
-      ...tasks,
-      [fromColumn]: updatedTasks,
-    });
-  } else {
-    moveTask(active.data.current.task, fromColumn, toColumn);
-  }
-
-  setActiveTask(null);
-};
 
   const addTask = () => {
     if (!title || !description) return alert('Please provide both a title and a description.');
@@ -105,6 +104,12 @@ function KanbanTodoApp() {
     });
   };
 
+  const closeModal = () => {
+    setIsOpen(false);
+    setTitle("");
+    setDescription("");
+  }
+
   return (
     <div className="p-4 lg:p-8 bg-white min-h-screen font-sans">
       <h1 className="text-3xl font-extrabold mb-6">To Do List App</h1>
@@ -133,7 +138,7 @@ function KanbanTodoApp() {
 
       <TaskModal
         isOpen={modalIsOpen}
-        closeModal={() => setIsOpen(false)}
+        closeModal={closeModal}
         title={title}
         setTitle={setTitle}
         description={description}
@@ -148,6 +153,7 @@ function KanbanTodoApp() {
           moveTask={moveTask}
         />
       )}
+
     </div>
   );
 }
